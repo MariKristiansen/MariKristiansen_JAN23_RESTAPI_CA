@@ -1,0 +1,587 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ToDo - by MK (API CA)",
+    "description": "This is an application for todos within categories for logged in users. <br>Create a user, view/add/update/delete your todo items and categories. <br>All endpoints regarding the todos- and categories functionalities require a valid JWT token. The token expires after one hour."
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/signup": {
+      "post": {
+        "tags": [
+          "Signup/login"
+        ],
+        "description": "Creates a new account, if not already exists. <br>Name, email and password is required.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "Signup",
+            "in": "body",
+            "description": "Signup user.",
+            "schema": {
+              "$ref": "#/definitions/Signup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "You created an account"
+          },
+          "400": {
+            "description": "Name/email/password is required"
+          },
+          "409": {
+            "description": "User already exists"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Signup/login"
+        ],
+        "description": "Login in users. <br>Logging in provides a token to be used when accessing the desired application. <br>Logging in requires a valid email and password.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "Login",
+            "in": "body",
+            "description": "Login.",
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "You are logged in"
+          },
+          "400": {
+            "description": "Email/password is required"
+          },
+          "401": {
+            "description": "Incorrect password"
+          },
+          "500": {
+            "description": "Something went wrong with creating token"
+          }
+        }
+      }
+    },
+    "/fail": {
+      "get": {
+        "tags": [
+          "Signup/login"
+        ],
+        "description": "",
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/categories/": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Gets the list of all categories. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Error retrieving categories"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Creates a new category. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Category",
+            "in": "body",
+            "description": "Add new category.",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New category created"
+          },
+          "400": {
+            "description": "Name needs to be a string"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Error creating category"
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Updates a category. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Category",
+            "in": "body",
+            "description": "Update category.",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Name needs to be a string"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Error updating category"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Deletes a category. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Error deleting category"
+          }
+        }
+      }
+    },
+    "/todos/": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Gets all the logged in user's todos. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Error retrieving todo items"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Creates a new todo item. <br>The item must be assigned to an existing CategoryId. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Todo",
+            "in": "body",
+            "description": "Add new todo.",
+            "schema": {
+              "$ref": "#/definitions/Todo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo created"
+          },
+          "400": {
+            "description": "CategoryId not found"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Error creating todo"
+          }
+        }
+      }
+    },
+    "/todos/all": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Gets the list of all todos, including todos with a deleted status. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Error retrieving todo items"
+          }
+        }
+      }
+    },
+    "/todos/deleted": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Gets the list of all todos with the deleted status. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Error retrieving todo items"
+          }
+        }
+      }
+    },
+    "/todos/{id}": {
+      "put": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Updates a todo item. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Todo",
+            "in": "body",
+            "description": "Update todo.",
+            "schema": {
+              "$ref": "#/definitions/Todo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "CategoryId/StatusId needs to be an integer"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Todo not found"
+          },
+          "500": {
+            "description": "Error updating category"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Deletes a todo item. <br>This will set the StatusId to 'Deleted'. <br>Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo marked as deleted"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Todo not found"
+          },
+          "500": {
+            "description": "Error deleting todo"
+          }
+        }
+      }
+    },
+    "/statuses": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "description": "Gets the list of all statuses. Type 'Bearer ' + the token in Authorization to access this endpoint.",
+        "produces": [
+          "json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Error retrieving statuses"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Signup": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "JohnDoe"
+        },
+        "email": {
+          "type": "string",
+          "example": "johnDoe@test.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "password"
+        }
+      },
+      "required": [
+        "name",
+        "email",
+        "password"
+      ]
+    },
+    "Login": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "johnDoe@test.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "password"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Chores"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "Todo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Vacuuming"
+        },
+        "description": {
+          "type": "string",
+          "example": "Vacuuming bedroom"
+        },
+        "CategoryId": {
+          "type": "number",
+          "example": 1
+        },
+        "StatusId": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "CategoryId",
+        "StatusId"
+      ]
+    }
+  }
+}
